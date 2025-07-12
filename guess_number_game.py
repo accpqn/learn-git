@@ -70,7 +70,7 @@ class GuessNumberGame:
         self.attempts += 1
         
         if guess == self.target_number:
-            print(f"🎉 恭喜你！猜对了！数字就是 {self.target_number}")
+            print(f"恭喜你！猜对了！数字就是 {self.target_number}")
             print(f"你用了 {self.attempts} 次尝试")
             self._record_game(True)
             return 'win'
@@ -88,7 +88,7 @@ class GuessNumberGame:
                 print(f"太大了！")
         
         if self.attempts >= self.max_attempts:
-            print(f"😢 游戏结束！你已经用完了所有 {self.max_attempts} 次机会")
+            print(f"游戏结束！你已经用完了所有 {self.max_attempts} 次机会")
             print(f"正确答案是: {self.target_number}")
             self._record_game(False)
             return 'lose'
@@ -145,7 +145,7 @@ def get_difficulty():
 
 def main():
     """主函数"""
-    print("🎮 欢迎来到猜数字游戏！")
+    print("欢迎来到猜数字游戏！")
     
     game = GuessNumberGame()
     
@@ -189,7 +189,7 @@ def main():
         
         elif choice == '3':
             # 退出游戏
-            print("感谢游戏！再见！👋")
+            print("感谢游戏！再见")
             break
         
         else:
