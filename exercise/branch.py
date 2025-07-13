@@ -8,3 +8,8 @@ while True:
     num = num-1
 
 print(num)
+# nch分支的内容
+if(num>66):
+    print("ok")
+else:
+    print("no")
