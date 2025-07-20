@@ -1,0 +1,1 @@
+<view class="agreement-links"><text class="agreement-text">登录即代表您同意</text><navigator url="{{a}}" class="link">《用户协议》</navigator><text class="agreement-text">和</text><navigator url="{{b}}" class="link">《隐私政策》</navigator></view>

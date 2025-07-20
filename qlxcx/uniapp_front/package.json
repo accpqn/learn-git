@@ -1,0 +1,50 @@
+{
+    "name": "qlxcx",
+    "version": "1.0.0",
+    "description": "情侣点餐小程序",
+    "main": "main.js",
+    "scripts": {
+        "serve": "npm run dev:h5",
+        "build": "npm run build:h5",
+        "dev:app": "uni build --watch",
+        "dev:app-plus": "uni build --watch --platform app-plus",
+        "dev:custom": "uni build --watch --platform",
+        "dev:h5": "uni build --watch --platform h5",
+        "dev:mp-alipay": "uni build --watch --platform mp-alipay",
+        "dev:mp-baidu": "uni build --watch --platform mp-baidu",
+        "dev:mp-kuaishou": "uni build --watch --platform mp-kuaishou",
+        "dev:mp-lark": "uni build --watch --platform mp-lark",
+        "dev:mp-qq": "uni build --watch --platform mp-qq",
+        "dev:mp-toutiao": "uni build --watch --platform mp-toutiao",
+        "dev:mp-weixin": "uni build --watch --platform mp-weixin",
+        "dev:quickapp-webview": "uni build --watch --platform quickapp-webview",
+        "build:app": "uni build --platform app",
+        "build:app-plus": "uni build --platform app-plus",
+        "build:custom": "uni build --platform",
+        "build:h5": "uni build --platform h5",
+        "build:mp-alipay": "uni build --platform mp-alipay",
+        "build:mp-baidu": "uni build --platform mp-baidu",
+        "build:mp-kuaishou": "uni build --platform mp-kuaishou",
+        "build:mp-lark": "uni build --platform mp-lark",
+        "build:mp-qq": "uni build --platform mp-qq",
+        "build:mp-toutiao": "uni build --platform mp-toutiao",
+        "build:mp-weixin": "uni build --platform mp-weixin",
+        "build:quickapp-webview": "uni build --platform quickapp-webview"
+    },
+    "dependencies": {
+        "dayjs": "^1.11.13",
+        "luch-request": "^3.1.1",
+        "uview-plus": "^3.4.41",
+        "pinia": "^2.1.7"
+    },
+    "devDependencies": {
+        "@dcloudio/types": "^3.4.8",
+        "@dcloudio/uni-automator": "^3.0.0-4010420231211001",
+        "@dcloudio/uni-cli-shared": "^3.0.0-4010420231211001",
+        "@dcloudio/uni-stacktracey": "^3.0.0-4010420231211001",
+        "@dcloudio/vite-plugin-uni": "^3.0.0-4010420231211001",
+        "vite": "^4.4.9",
+        "vue": "^3.3.4",
+        "@vitejs/plugin-vue": "^4.2.3"
+    }
+}

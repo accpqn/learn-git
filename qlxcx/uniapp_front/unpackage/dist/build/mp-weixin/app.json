@@ -1,0 +1,55 @@
+{
+  "pages": [
+    "pages/home/index",
+    "pages/ordering/index",
+    "pages/settings/index",
+    "pages/settings/menu-manage",
+    "pages/settings/theme-config",
+    "pages/public/login",
+    "pages/public/register",
+    "pages/user/index",
+    "pages/user/profile",
+    "pages/order/list",
+    "pages/order/detail",
+    "pages/order/confirm"
+  ],
+  "window": {
+    "navigationBarTextStyle": "black",
+    "navigationBarTitleText": "情侣小程序",
+    "navigationBarBackgroundColor": "#F8F8F8",
+    "backgroundColor": "#F8F8F8"
+  },
+  "tabBar": {
+    "color": "#909399",
+    "selectedColor": "#FF69B4",
+    "borderStyle": "white",
+    "backgroundColor": "#ffffff",
+    "list": [
+      {
+        "pagePath": "pages/home/index",
+        "iconPath": "static/images/tab/home.png",
+        "selectedIconPath": "static/images/tab/home_selected.png",
+        "text": "首页"
+      },
+      {
+        "pagePath": "pages/ordering/index",
+        "iconPath": "static/images/tab/order.png",
+        "selectedIconPath": "static/images/tab/order_selected.png",
+        "text": "点餐"
+      },
+      {
+        "pagePath": "pages/order/list",
+        "iconPath": "static/images/tab/list.png",
+        "selectedIconPath": "static/images/tab/list_selected.png",
+        "text": "订单"
+      },
+      {
+        "pagePath": "pages/user/index",
+        "iconPath": "static/images/tab/user.png",
+        "selectedIconPath": "static/images/tab/user_selected.png",
+        "text": "我的"
+      }
+    ]
+  },
+  "usingComponents": {}
+}

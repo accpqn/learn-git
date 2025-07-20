@@ -1,0 +1,1 @@
+"use strict";const e=require("../../utils/config.js"),r={name:"AgreementLinks",data:()=>({userAgreementUrl:e.APP_CONFIG.agreements.userAgreement,privacyPolicyUrl:e.APP_CONFIG.agreements.privacyPolicy})};const n=require("../../common/vendor.js")._export_sfc(r,[["render",function(e,r,n,t,c,s){return{a:c.userAgreementUrl,b:c.privacyPolicyUrl}}]]);wx.createComponent(n);

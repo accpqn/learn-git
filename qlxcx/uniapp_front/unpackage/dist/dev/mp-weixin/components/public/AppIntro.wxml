@@ -1,0 +1,1 @@
+<view class="app-intro"><image class="logo" src="{{a}}" mode="aspectFit"></image><text class="app-name">{{b}}</text><text class="description">{{c}}</text><view class="features"><view wx:for="{{d}}" wx:for-item="feature" wx:key="c" class="feature-item"><text class="feature-title">{{feature.a}}</text><text class="feature-desc">{{feature.b}}</text></view></view></view>

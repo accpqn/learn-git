@@ -1,0 +1,34 @@
+"use strict";
+const mockMenuData = {
+  categories: [
+    { id: 1, name: "人气必喝" },
+    { id: 2, name: "果茶家族" },
+    { id: 3, name: "醇香奶茶" },
+    { id: 4, name: "芝士茗茶" },
+    { id: 5, name: "养生热饮" },
+    { id: 6, name: "美味小食" }
+  ],
+  products: {
+    1: [
+      // 人气必喝
+      { id: 101, categoryId: 1, name: "多肉葡萄", description: "颗颗手剥葡萄，饱满多汁", price: "28", image: "/static/images/products/grape.png" },
+      { id: 102, categoryId: 1, name: "芝芝莓莓", description: "新鲜草莓搭配浓郁芝士", price: "32", image: "/static/images/products/strawberry.png" }
+    ],
+    2: [
+      // 果茶家族
+      { id: 201, categoryId: 2, name: "满杯红柚", description: "大片红柚，清爽解腻", price: "25", image: "/static/images/products/pomelo.png" },
+      { id: 202, categoryId: 2, name: "超大桶水果茶", description: "多种水果，一次喝个够", price: "35", image: "/static/images/products/fruit-tea.png" }
+    ],
+    3: [
+      // 醇香奶茶
+      { id: 301, categoryId: 3, name: "波霸奶茶", description: "经典之选，Q弹有嚼劲", price: "18", image: "/static/images/products/boba.png" }
+    ],
+    4: [],
+    5: [],
+    6: [
+      { id: 601, categoryId: 6, name: "酥脆鸡米花", description: "外酥里嫩，咸香可口", price: "15", image: "/static/images/products/popcorn-chicken.png" }
+    ]
+  }
+};
+exports.mockMenuData = mockMenuData;
+//# sourceMappingURL=../../.sourcemap/mp-weixin/mock/menu.js.map

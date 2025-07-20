@@ -1,0 +1,16 @@
+
+.agreement-links {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    font-size: 24rpx;
+    color: #999;
+    padding: 20rpx 0;
+}
+.agreement-text {
+    color: #999;
+}
+.link {
+    color: #FF69B4;
+    display: inline;
+}

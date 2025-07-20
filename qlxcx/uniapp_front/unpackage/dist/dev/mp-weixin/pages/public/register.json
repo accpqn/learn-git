@@ -1,0 +1,6 @@
+{
+  "navigationBarTitleText": "注册",
+  "usingComponents": {
+    "agreement-links": "../../components/public/AgreementLinks"
+  }
+}
