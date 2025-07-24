@@ -13,3 +13,4 @@ if(num>66):
     print("ok")
 else:
     print("no")
+
