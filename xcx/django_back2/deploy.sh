@@ -4,7 +4,7 @@
 
 set -e  # 遇到错误立即退出
 
-echo "🚀 开始部署Django后端..."
+echo "开始部署Django后端..."
 
 # 检查Python版本
 echo "检查Python版本..."
@@ -34,7 +34,7 @@ echo "🔧 使用生产环境配置: settings_prod.py (MySQL数据库)"
 
 # 检查配置文件是否存在
 if [ ! -f "djangoProject/settings_prod.py" ]; then
-    echo "❌ 生产环境配置文件不存在: djangoProject/settings_prod.py"
+    echo "生产环境配置文件不存在: djangoProject/settings_prod.py"
     exit 1
 fi
 
@@ -76,7 +76,7 @@ else
     echo "要启动服务，请运行: ./start.sh"
 fi
 
-echo "✅ Django后端部署完成！"
-echo "📁 项目目录: $(pwd)"
-echo "📝 日志目录: $(pwd)/logs"
-echo "🔧 配置文件: $SETTINGS_MODULE"
+echo "Django后端部署完成！"
+echo "项目目录: $(pwd)"
+echo "日志目录: $(pwd)/logs"
+echo "配置文件: $SETTINGS_MODULE"

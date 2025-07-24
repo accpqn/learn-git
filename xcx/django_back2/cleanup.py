@@ -14,7 +14,7 @@ def cleanup_project():
     # 当前目录
     base_dir = os.path.dirname(os.path.abspath(__file__))
     
-    print("🧹 开始清理Django项目...")
+    print("开始清理Django项目...")
     
     # 1. 清理Python缓存文件
     print("清理Python缓存文件...")
@@ -111,8 +111,8 @@ def cleanup_project():
                 os.remove(path)
                 print(f"删除日志文件: {path}")
     
-    print("\n✅ 项目清理完成!")
-    print("\n📁 保留的重要文件:")
+    print("\n项目清理完成!")
+    print("\n保留的重要文件:")
     print("- backup/ (SQL备份)")
     print("- media/avatars/ (用户头像)")
     print("- requirements.txt (依赖列表)")
