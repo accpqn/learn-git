@@ -3,6 +3,16 @@
 import os
 import sys
 
+"""
+先对某个模块创建模型迁移的文件
+python manage.py makemigrations article
+执行迁移命令
+python manage.py migrate
+
+# 启动服务器
+python manage.py runserver
+"""
+
 
 def main():
     """Run administrative tasks."""

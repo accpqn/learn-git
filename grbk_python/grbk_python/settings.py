@@ -32,7 +32,8 @@ INSTALLED_APPS = [
     'rest_framework_simplejwt.token_blacklist',
 
     # 自定义模块
-    'users'
+    'users',
+    'article'
 ]
 
 MIDDLEWARE = [
