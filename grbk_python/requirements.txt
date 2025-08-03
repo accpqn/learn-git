@@ -1,0 +1,20 @@
+# Django 核心
+Django>=4.2.0
+djangorestframework>=3.14.0
+
+# JWT 认证
+djangorestframework-simplejwt>=5.2.0
+
+# CORS 支持
+django-cors-headers>=4.0.0
+
+# Redis 缓存支持（用于Token黑名单管理）
+redis>=4.5.0
+django-redis>=5.2.0
+
+# MySQL 数据库支持
+mysqlclient>=2.1.0
+
+# 其他可能需要的包
+Pillow>=9.5.0  # 用于图片处理（如用户头像）
+python-decouple>=3.8  # 用于环境变量管理（可选）

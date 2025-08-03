@@ -4,8 +4,11 @@ from rest_framework.response import Response
 from rest_framework.views import APIView
 from rest_framework.permissions import IsAuthenticated, AllowAny
 from rest_framework_simplejwt.tokens import RefreshToken
+from rest_framework_simplejwt.views import TokenRefreshView as BaseTokenRefreshView
 from django.contrib.auth import authenticate
 from django.contrib.auth import get_user_model
+from django.utils import timezone
+from .token_manager import TokenManager
 from .serializers import (
     UserRegistrationSerializer,
     UserLoginSerializer,
@@ -24,19 +27,12 @@ class UserRegistrationView(APIView):
         if serializer.is_valid():
             user = serializer.save()
 
-            # 生成JWT token
-            refresh = RefreshToken.for_user(user)
-
             return Response({
-                'message': '注册成功',
+                'message': '注册成功，请登录获取访问权限',
                 'user': {
                     'id': user.id,
                     'username': user.username,
                     'email': user.email,
-                },
-                'tokens': {
-                    'refresh': str(refresh),
-                    'access': str(refresh.access_token),
                 }
             }, status=status.HTTP_201_CREATED)
 
@@ -47,32 +43,49 @@ class UserRegistrationView(APIView):
 
 
 class UserLoginView(APIView):
-    """用户登录API"""
+    """
+    用户登录API
+        验证 用户名/密码
+        清理用户的所有旧token
+        生成新的JWT token对
+    """
     permission_classes = [AllowAny]
 
     def post(self, request):
+
         serializer = UserLoginSerializer(data=request.data)
         if serializer.is_valid():
             username = serializer.validated_data['username']
             password = serializer.validated_data['password']
 
+            # 使用Django内置认证验证用户凭据
             user = authenticate(username=username, password=password)
             if user:
-                # 生成JWT token
-                refresh = RefreshToken.for_user(user)
+                # 更新最后登录时间
+                user.last_login = timezone.now()
+                user.save(update_fields=['last_login'])
+                
+                # 登录前清理用户的所有旧token
+                cleaned_count = TokenManager.cleanup_user_tokens(user)
+                
+                # 生成新的token对并自动追踪
+                tokens = TokenManager.generate_tokens_for_user(user)
 
-                return Response({
+                response_data = {
                     'message': '登录成功',
                     'user': {
                         'id': user.id,
                         'username': user.username,
                         'email': user.email,
                     },
-                    'tokens': {
-                        'refresh': str(refresh),
-                        'access': str(refresh.access_token),
-                    }
-                }, status=status.HTTP_200_OK)
+                    'tokens': tokens
+                }
+                
+                # 如果清理了旧token，在响应中提示用户
+                if cleaned_count > 0:
+                    response_data['info'] = f'已清理 {cleaned_count} 个旧的登录会话'
+
+                return Response(response_data, status=status.HTTP_200_OK)
 
             return Response({
                 'message': '用户名或密码错误'
@@ -85,27 +98,64 @@ class UserLoginView(APIView):
 
 
 class UserLogoutView(APIView):
-    """用户登出API"""
+    """
+    用户登出API
+        将用户的refresh token加入官方黑名单（数据库存储）
+        将用户的access token加入自定义黑名单（缓存存储）
+    """
     permission_classes = [IsAuthenticated]
 
     def post(self, request):
-        try:
-            refresh_token = request.data.get("refresh")
-            if not refresh_token:
-                return Response({
-                    'message': '缺少 refresh token'
-                }, status=status.HTTP_400_BAD_REQUEST)
-            
-            token = RefreshToken(refresh_token)
-            token.blacklist()
 
+        # 使用 TokenManager 将两个token加入黑名单
+        result = TokenManager.logout_user(request)
+        
+        if result['success']:
             return Response({
-                'message': '登出成功'
+                'message': result['message']
             }, status=status.HTTP_200_OK)
-        except Exception as e:
+        else:
             return Response({
-                'message': f'登出失败: {str(e)}'
+                'message': result['message']
             }, status=status.HTTP_400_BAD_REQUEST)
+    
+
+class CustomTokenRefreshView(BaseTokenRefreshView):
+    """
+    自定义Token刷新视图
+        使用refresh token生成新的access token
+        将旧的access token加入黑名单
+        追踪新生成的access token
+    """
+    
+    def post(self, request, *args, **kwargs):
+        # 调用父类方法生成新的access token
+        response = super().post(request, *args, **kwargs)
+        
+        # 如果刷新成功，进行安全处理
+        if response.status_code == 200:
+            response_data = response.data
+            
+            # 使用TokenManager统一处理token刷新逻辑
+            # 1. 将旧的access token加入黑名单
+            # 2. 追踪新生成的access token
+            new_access_token = response_data.get('access')
+            refresh_token_string = request.data.get('refresh')
+            
+            success = TokenManager.refresh_user_token(
+                request, 
+                new_access_token, 
+                refresh_token_string
+            )
+            
+            if success:
+                response_data['info'] = '已刷新token，旧的access token已失效'
+            else:
+                response_data['info'] = '已刷新token'
+                
+            response.data = response_data
+        
+        return response
 
 
 class UserProfileView(APIView):
@@ -113,7 +163,7 @@ class UserProfileView(APIView):
     permission_classes = [IsAuthenticated]
 
     def get(self, request):
-        serializer = UserProfileSerializer(request.user)
+        serializer = UserProfileSerializer(request.user, context={'request': request})
         return Response({
             'message': '获取用户资料成功',
             'user': serializer.data
@@ -128,7 +178,8 @@ class UserProfileUpdateView(APIView):
         serializer = UserProfileSerializer(
             request.user,      # 第一个参数是要更新的对象实例
             data=request.data, # 新的数据
-            partial=True       # 允许部分更新
+            partial=True,      # 允许部分更新
+            context={'request': request}  # 传递request上下文
         )
 
         if serializer.is_valid():
@@ -194,10 +245,19 @@ class DebugAuthView(APIView):
         user = request.user
         is_authenticated = user.is_authenticated
         
+        # 获取token统计信息
+        token_stats = TokenManager.get_token_stats()
+        if is_authenticated:
+            user_token_stats = TokenManager.get_token_stats(user)
+        else:
+            user_token_stats = None
+        
         return Response({
             'auth_header': auth_header,
             'user': str(user),
             'is_authenticated': is_authenticated,
             'user_id': user.id if is_authenticated else None,
             'username': user.username if is_authenticated else None,
+            'global_token_stats': token_stats,
+            'user_token_stats': user_token_stats,
         })

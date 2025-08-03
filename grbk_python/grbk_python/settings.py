@@ -43,6 +43,7 @@ MIDDLEWARE = [
     'django.middleware.common.CommonMiddleware',
     'django.middleware.csrf.CsrfViewMiddleware',
     'django.contrib.auth.middleware.AuthenticationMiddleware',
+    'users.middleware.AccessTokenBlacklistMiddleware',  # JWT黑名单中间件（极简版）
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
 ]
@@ -163,11 +164,44 @@ REST_FRAMEWORK = {
 from datetime import timedelta
 
 SIMPLE_JWT = {
-    'ACCESS_TOKEN_LIFETIME': timedelta(minutes=60),
+    'ACCESS_TOKEN_LIFETIME': timedelta(minutes=30),
     'REFRESH_TOKEN_LIFETIME': timedelta(days=7),
-    'ROTATE_REFRESH_TOKENS': True,
-    'BLACKLIST_AFTER_ROTATION': True,
+    'ROTATE_REFRESH_TOKENS': False,  # 关闭token轮换，解决黑名单问题
+    'BLACKLIST_AFTER_ROTATION': False,  # 关闭轮换后自动黑名单
+    'UPDATE_LAST_LOGIN': True,  # 自动更新last_login字段
 }
+
+# 缓存配置（用于Token黑名单管理）
+
+import os
+
+# Redis连接配置
+REDIS_URL = os.getenv('REDIS_URL', 'redis://:123456@localhost:6379/1')
+CACHES = {
+        'default': {
+            'BACKEND': 'django_redis.cache.RedisCache',
+            'LOCATION': REDIS_URL,
+            'OPTIONS': {
+                'CLIENT_CLASS': 'django_redis.client.DefaultClient',
+                'CONNECTION_POOL_KWARGS': {
+                    'max_connections': 50,
+                    'retry_on_timeout': True,
+                    'socket_connect_timeout': 10,
+                    'socket_timeout': 10,
+                },
+            },
+            'KEY_PREFIX': 'grbk_jwt',
+            'TIMEOUT': 1800,
+            'VERSION': 1,
+        }
+}
+
+# Redis配置说明：
+# - 默认连接：redis://127.0.0.1:6379/1
+# - 自定义连接：设置环境变量 REDIS_URL=redis://host:port/db
+# - 连接池：最大50个连接，支持高并发
+# - Key前缀：grbk_jwt，避免与其他应用冲突
+# - 默认TTL：1800秒（30分钟），与access token生命周期一致
 
 # CORS 配置
 CORS_ALLOWED_ORIGINS = [

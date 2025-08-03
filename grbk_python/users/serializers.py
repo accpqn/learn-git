@@ -42,23 +42,45 @@ class UserLoginSerializer(serializers.Serializer):
 
 class UserProfileSerializer(serializers.ModelSerializer):
     """用户资料序列化器"""
-    avatar_url = serializers.SerializerMethodField()
+    # avatar_url = serializers.SerializerMethodField()
 
     class Meta:
         model = User
         fields = (
-            'id', 'username', 'email', 'avatar', 'avatar_url',
+            'id', 'username', 'email', 'avatar',
             'bio', 'date_joined', 'last_login'
         )
         read_only_fields = ('id', 'username', 'date_joined', 'last_login')
 
-    def get_avatar_url(self, obj):
-        if obj.avatar:
-            request = self.context.get('request')
-            if request:
-                return request.build_absolute_uri(obj.avatar.url)
-            return obj.avatar.url
-        return None
+    # def get_avatar_url(self, obj):
+    #     if obj.avatar:
+    #         request = self.context.get('request')
+    #         if request:
+    #             return request.build_absolute_uri(obj.avatar.url)
+    #         return obj.avatar.url
+    #     return None
+    
+    def validate_email(self, value):
+        """验证邮箱唯一性"""
+        if value and User.objects.filter(email=value).exclude(pk=self.instance.pk).exists():
+            raise serializers.ValidationError("该邮箱已被其他用户使用")
+        return value
+    
+    def update(self, instance, validated_data):
+        # 处理头像上传
+        if 'avatar' in validated_data:
+            # 如果有新头像，删除旧头像文件
+            if instance.avatar:
+                instance.avatar.delete(save=False)
+            instance.avatar = validated_data['avatar']
+        
+        # 更新其他字段
+        for attr, value in validated_data.items():
+            if attr != 'avatar':  # avatar已经处理过了
+                setattr(instance, attr, value)
+        
+        instance.save()
+        return instance
 
 
 class PasswordChangeSerializer(serializers.Serializer):
